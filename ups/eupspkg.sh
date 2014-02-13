@@ -1,7 +1,16 @@
 # EupsPkg config file. Sourced by 'eupspkg'
 
-CONFIGURE_OPTIONS="LDFLAGS=\"-L${LIBEVENT_DIR}/lib\" LIBS=\"-levent -lm\" \
-CPPFLAGS=\"-I${LIBEVENT_DIR}/include\" \
-LUA_CFLAGS=\"-I${LUA_DIR}/include\" LUA_LIBS=\"-L${LUA_DIR}/lib -llua\" \
---prefix=\"${PRODUCT_DIR}\" --with-lua 
---with-mysql=${MYSQL_DIR}/bin/mysql_config"
+# Link to libevent
+export LDFLAGS="-L$LIBEVENT_DIR/lib"
+export LIBS="-levent -lm"
+export CPPFLAGS="-I$LIBEVENT_DIR/include"
+export CFLAGS="-I$LIBEVENT_DIR/include"
+
+# Link to Lua
+export LUA_CFLAGS="-I$LUA_DIR/include"
+export LUA_LIBS="-L$LUA_DIR/lib -llua"
+
+# Note: It is assumed that glib2 is installed system-wide and that
+# ./configure will detect it up via pkg-config.
+
+CONFIGURE_OPTIONS="--prefix=$PREFIX --with-lua --with-mysql=$MYSQL_DIR/bin/mysql_config"
