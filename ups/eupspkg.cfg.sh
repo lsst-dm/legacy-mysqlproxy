@@ -4,7 +4,6 @@
 export LDFLAGS="-L$LIBEVENT_DIR/lib"
 export LIBS="-levent -lm"
 export CPPFLAGS="-I$LIBEVENT_DIR/include"
-export CFLAGS="-I$LIBEVENT_DIR/include"
 
 # Link to Lua
 export LUA_CFLAGS="-I$LUA_DIR/include"
