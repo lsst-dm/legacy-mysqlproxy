@@ -219,7 +219,7 @@ char *chassis_frontend_get_default_lua_cpath(const char *base_dir, const char *p
 static int chassis_frontend_init_lua_paths(const char *set_path,
 		const char *base_dir, char **lua_subdirs,
 		gboolean is_lua_path) {
-	const char *env_var = is_lua_path ? LUA_PATH : LUA_CPATH;
+	const char *env_var = is_lua_path ? "LUA_PATH" : "LUA_CPATH";
 	int ret = 0;
 
 	if (set_path) {
