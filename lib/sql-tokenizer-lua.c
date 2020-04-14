@@ -51,7 +51,7 @@ static int proxy_tokenize_token_get(lua_State *L) {
 }
 
 int sql_tokenizer_lua_token_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_tokenize_token_get },
 		{ NULL, NULL },
 	};
@@ -142,7 +142,7 @@ static int proxy_tokenize_gc(lua_State *L) {
 
 
 static int sql_tokenizer_lua_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_tokenize_get },
 		{ "__newindex", proxy_tokenize_set },
 		{ "__len",   proxy_tokenize_len },
@@ -188,7 +188,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_reg mysql_tokenizerlib[] = {
+static const struct luaL_Reg mysql_tokenizerlib[] = {
 	{"tokenize", proxy_tokenize},
 	{NULL, NULL},
 };

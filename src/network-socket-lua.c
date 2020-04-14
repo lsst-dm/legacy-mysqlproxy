@@ -92,7 +92,7 @@ static int proxy_socket_get(lua_State *L) {
 }
 
 int network_socket_lua_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_socket_get },
 		{ NULL, NULL },
 	};

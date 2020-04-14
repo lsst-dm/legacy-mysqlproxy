@@ -146,7 +146,7 @@ static int proxy_queue_len(lua_State *L) {
 	return 1;
 }
 
-static const struct luaL_reg methods_proxy_queue[] = {
+static const struct luaL_Reg methods_proxy_queue[] = {
 	{ "prepend", proxy_queue_prepend },
 	{ "append", proxy_queue_append },
 	{ "reset", proxy_queue_reset },
@@ -203,7 +203,7 @@ static int proxy_resultset_field_get(lua_State *L) {
 	return 1;
 }
 
-static const struct luaL_reg methods_proxy_resultset_fields_field[] = {
+static const struct luaL_Reg methods_proxy_resultset_fields_field[] = {
 	{ "__index", proxy_resultset_field_get },
 	{ NULL, NULL },
 };
@@ -360,7 +360,7 @@ static int proxy_resultset_fields_gc(lua_State *L) {
 	return 0;
 }
 
-static const struct luaL_reg methods_proxy_resultset_fields[] = {
+static const struct luaL_Reg methods_proxy_resultset_fields[] = {
 	{ "__index", proxy_resultset_fields_get },
 	{ "__len", proxy_resultset_fields_len },
 	{ "__gc", proxy_resultset_fields_gc },
@@ -478,7 +478,7 @@ static int proxy_resultset_get(lua_State *L) {
 	return 1;
 }
 
-static const struct luaL_reg methods_proxy_resultset[] = {
+static const struct luaL_Reg methods_proxy_resultset[] = {
 	{ "__index", proxy_resultset_get },
 	{ "__gc", proxy_resultset_gc },
 	{ NULL, NULL },
@@ -556,7 +556,7 @@ static int proxy_injection_get(lua_State *L) {
 	return 1;
 }
 
-static const struct luaL_reg methods_proxy_injection[] = {
+static const struct luaL_Reg methods_proxy_injection[] = {
 	{ "__index", proxy_injection_get },
 	{ NULL, NULL },
 };

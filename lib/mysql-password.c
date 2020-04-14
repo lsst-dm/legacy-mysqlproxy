@@ -126,7 +126,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_reg mysql_passwordlib[] = {
+static const struct luaL_Reg mysql_passwordlib[] = {
 	{"hash", lua_password_hash},
 	{"scramble", lua_password_scramble},
 	{"unscramble", lua_password_unscramble},

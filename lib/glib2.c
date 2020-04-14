@@ -79,7 +79,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_reg gliblib[] = {
+static const struct luaL_Reg gliblib[] = {
 	{"usleep", lua_g_usleep},
 	{"md5", lua_g_checksum_md5},
 	{"get_current_time", lua_g_get_current_time},

@@ -152,7 +152,7 @@ static int proxy_connection_set(lua_State *L) {
 }
 
 int network_mysqld_con_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_connection_get },
 		{ "__newindex", proxy_connection_set },
 		{ NULL, NULL },
