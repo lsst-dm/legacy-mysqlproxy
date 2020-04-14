@@ -119,7 +119,7 @@ int luaL_loadstring_factory(lua_State *L, const char *s) {
 	factory.prefix = "return function()";
 	factory.postfix = "end\n";
 
-	return lua_load(L, loadstring_factory_reader, &factory, s);
+	return lua_load(L, loadstring_factory_reader, &factory, s, "bt");
 }
 
 int luaL_loadfile_factory(lua_State *L, const char *filename) {
@@ -143,7 +143,7 @@ int luaL_loadfile_factory(lua_State *L, const char *filename) {
 		return ret;
 	}
 
-	ret = lua_load(L, loadstring_factory_reader, &factory, filename);
+	ret = lua_load(L, loadstring_factory_reader, &factory, filename, "bt");
 
 	if (ferror(factory.data.file.f)) {
 		lua_pop(L, 1); /* old error-msg */
