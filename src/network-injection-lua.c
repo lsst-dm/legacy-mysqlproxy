@@ -92,7 +92,7 @@ static int proxy_queue_add(lua_State *L, proxy_queue_add_t type) {
 		break;
 	default:
 		proxy_lua_dumpstack_verbose(L);
-		luaL_typerror(L, 4, "table");
+		luaL_error(L, "table expected");
 		break;
 	}
 
