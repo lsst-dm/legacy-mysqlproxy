@@ -331,7 +331,7 @@ network_mysqld_register_callback_ret network_mysqld_con_lua_register_callback(ne
 
 	lua_newtable(L); /* the meta-table for the new env           (sp += 1) 2 */
 
-	lua_pushvalue(L, LUA_GLOBALSINDEX);                       /* (sp += 1) 3 */
+	lua_pushglobaltable(L);                                   /* (sp += 1) 3 */
 	lua_setfield(L, -2, "__index"); /* { __index = _G }          (sp -= 1) 2 */
 	lua_setmetatable(L, -2); /* setmetatable({}, {__index = _G}) (sp -= 1) 1 */
 
