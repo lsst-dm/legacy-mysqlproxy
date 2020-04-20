@@ -338,7 +338,7 @@ static network_mysqld_lua_stmt_ret admin_lua_read_query(network_mysqld_con *con)
 		network_mysqld_lua_stmt_ret ret = PROXY_NO_DECISION;
 
 		g_assert(lua_isfunction(L, -1));
-		lua_getfenv(L, -1);
+		lua_getupvalue(L, -1, 1);
 		g_assert(lua_istable(L, -1));
 
 		/**

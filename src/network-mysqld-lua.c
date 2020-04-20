@@ -284,7 +284,7 @@ network_mysqld_register_callback_ret network_mysqld_con_lua_register_callback(ne
 
 		g_assert(lua_isfunction(L, -1));
 
-		lua_getfenv(L, -1);
+		lua_getupvalue(L, -1, 1);
 		g_assert(lua_istable(L, -1));
 
 		lua_getglobal(L, "proxy");
@@ -431,7 +431,7 @@ network_mysqld_register_callback_ret network_mysqld_con_lua_register_callback(ne
 	g_assert(lua_isfunction(L, -2));
 	g_assert(lua_istable(L, -1));
 
-	lua_setfenv(L, -2); /* on the stack should be a modified env (sp -= 1) */
+	lua_setupvalue(L, -2, 1); /* on the stack should be a modified env (sp -= 1) */
 
 	/* cache the script in this connection */
 	g_assert(lua_isfunction(L, -1));

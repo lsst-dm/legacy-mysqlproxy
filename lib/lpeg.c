@@ -218,7 +218,7 @@ static const char *val2str (lua_State *L, int idx) {
 
 static int getposition (lua_State *L, int t, int i) {
   int res;
-  lua_getfenv(L, -1);
+  lua_getupvalue(L, -1, 1);
   lua_rawgeti(L, -1, i);  /* get key from pattern's environment */
   lua_gettable(L, t);  /* get position from positions table */
   res = lua_tointeger(L, -1);
@@ -924,9 +924,9 @@ static int isheadfail (Instruction *p) {
 
 static int jointable (lua_State *L, int p1) {
   int n, n1, i;
-  lua_getfenv(L, p1);
+  lua_getupvalue(L, p1, 1);
   n1 = lua_objlen(L, -1);  /* number of elements in p1's env */
-  lua_getfenv(L, -2);
+  lua_getupvalue(L, -2, 1);
   if (n1 == 0 || lua_equal(L, -2, -1)) {
     lua_pop(L, 2);
     return 0;  /* no need to change anything */
@@ -934,7 +934,7 @@ static int jointable (lua_State *L, int p1) {
   n = lua_objlen(L, -1);  /* number of elements in p's env */
   if (n == 0) {
     lua_pop(L, 1);  /* removes p env */
-    lua_setfenv(L, -2);  /* p now shares p1's env */
+    lua_setupvalue(L, -2, 1);  /* p now shares p1's env */
     return 0;  /* no need to correct anything */
   }
   lua_createtable(L, n + n1, 0);
@@ -947,7 +947,7 @@ static int jointable (lua_State *L, int p1) {
     lua_rawgeti(L, -3, i);
     lua_rawseti(L, -2, n + i);
   }
-  lua_setfenv(L, -4);  /* new table becomes p env */
+  lua_setupvalue(L, -4, 1);  /* new table becomes p env */
   lua_pop(L, 2);  /* remove p1 env and old p env */
   return n;
 }
@@ -989,7 +989,7 @@ static int value2fenv (lua_State *L, int vidx) {
   lua_createtable(L, 1, 0);
   lua_pushvalue(L, vidx);
   lua_rawseti(L, -2, 1);
-  lua_setfenv(L, -2);
+  lua_setupvalue(L, -2, 1);
   return 1;
 }
 
@@ -1682,7 +1682,7 @@ static int capconst_l (lua_State *L) {
       lua_rawseti(L, -2, j++);
     }
   }
-  lua_setfenv(L, -2);   /* set environment */
+  lua_setupvalue(L, -2, 1);   /* set environment */
   return 1;
 }
 
@@ -2093,7 +2093,7 @@ static int type_l (lua_State *L) {
 static int printpat_l (lua_State *L) {
   Instruction *p = getpatt(L, 1, NULL);
   int n, i;
-  lua_getfenv(L, 1);
+  lua_getupvalue(L, 1, 1);
   n = lua_objlen(L, -1);
   printf("[");
   for (i = 1; i <= n; i++) {
@@ -2124,7 +2124,7 @@ static int matchl (lua_State *L) {
              (((size_t)-ii <= l) ? l - ((size_t)-ii) : 0);
   lua_pushnil(L);  /* subscache */
   lua_pushlightuserdata(L, capture);  /* caplistidx */
-  lua_getfenv(L, 1);  /* penvidx */
+  lua_getupvalue(L, 1, 1);  /* penvidx */
   r = match(L, s, s + i, s + l, p, capture, ptop);
   if (r == NULL) {
     lua_pushnil(L);
