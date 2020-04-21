@@ -99,9 +99,9 @@ int chassis_check_version(const char *lib_version, const char *hdr_version) {
 chassis *chassis_new() {
 	chassis *chas;
 
-	if (0 != chassis_check_version(event_get_version(), _EVENT_VERSION)) {
+	if (0 != chassis_check_version(event_get_version(), LIBEVENT_VERSION)) {
 		g_critical("%s: chassis is build against libevent %s, but now runs against %s",
-				G_STRLOC, _EVENT_VERSION, event_get_version());
+				G_STRLOC, LIBEVENT_VERSION, event_get_version());
 		return NULL;
 	}
 
@@ -116,7 +116,7 @@ chassis *chassis_new() {
 
 	chas->threads = chassis_event_threads_new();
 
-	chas->event_hdr_version = g_strdup(_EVENT_VERSION);
+	chas->event_hdr_version = g_strdup(LIBEVENT_VERSION);
 
 	chas->shutdown_hooks = chassis_shutdown_hooks_new();
 
