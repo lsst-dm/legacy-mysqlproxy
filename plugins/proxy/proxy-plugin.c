@@ -1562,6 +1562,10 @@ NETWORK_MYSQLD_PLUGIN_PROTO(proxy_read_query_result) {
 		 * */
 
 		if (inj) {
+			/* Normally it should be enough to check only client capabilities but there are cases
+			when client sets its flag even if server does not announce that capability (see bug #91533). */
+			inj->capabilities = con->client->response->client_capabilities & 
+								con->client->response->server_capabilities;
 			if (con->parse.command == COM_QUERY || con->parse.command == COM_STMT_EXECUTE) {
 				network_mysqld_com_query_result_t *com_query = con->parse.data;
 

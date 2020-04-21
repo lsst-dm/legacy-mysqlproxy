@@ -66,6 +66,7 @@ static int proxy_queue_add(lua_State *L, proxy_queue_add_t type) {
 
 	inj = injection_new(resp_type, query);
 	inj->resultset_is_needed = FALSE;
+	inj->capabilities = 0;   /* this will be set to actual value by proxy-plugin.c */
 
 	/* check the 4th (last) param */
 	switch (luaL_opt(L, lua_istable, 4, -1)) {
@@ -341,13 +342,12 @@ static int parse_resultset_fields(proxy_resultset_t *res) {
     
 	if (!res->fields) return -1;
     
-	chunk = network_mysqld_proto_get_fielddefs(res->result_queue->head, res->fields);
+	chunk = network_mysqld_proto_get_fielddefs(res->result_queue->head, res->fields, res->capabilities);
     
 	/* no result-set found */
 	if (!chunk) return -1;
     
-	/* skip the end-of-fields chunk */
-	res->rows_chunk_head = chunk->next;
+	res->rows_chunk_head = chunk;
     
 	return 0;
 }
@@ -544,6 +544,7 @@ static int proxy_injection_get(lua_State *L) {
 		res->qstat = inj->qstat;
 		res->rows  = inj->rows;
 		res->bytes = inj->bytes;
+		res->capabilities = inj->capabilities;
 	
 		proxy_resultset_lua_push(L, res);
 	} else {

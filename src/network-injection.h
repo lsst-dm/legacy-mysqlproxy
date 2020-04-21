@@ -66,6 +66,8 @@ typedef struct {
 	guint64      bytes;
 
 	gboolean     resultset_is_needed;       /**< flag to announce if we have to buffer the result for later processing */
+
+	guint32      capabilities;              /**< client capabilities (which should also be a subset of server capabilities) */
 } injection;
 
 /**
@@ -96,6 +98,8 @@ typedef struct {
 	
 	guint64      rows;
 	guint64      bytes;
+
+	guint32      capabilities;              /**< client capabilities (which should also be a subset of server capabilities) */
 } proxy_resultset_t;
 
 NETWORK_API injection *injection_new(int id, GString *query);

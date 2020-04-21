@@ -130,12 +130,18 @@ static int network_mysqld_resultset_master_status(chassis *UNUSED_PARAM(chas), n
 	plugin_con_state *st = con->plugin_con_state;
 	GPtrArray *fields;
 	int err = 0;
+	guint32 capabilities;
+
+	/* Normally it should be enough to check only client capabilities but there are cases
+	when client sets its flag even if server does not announce that capability (see bug #91533). */
+	capabilities = con->client->response->client_capabilities & 
+				   con->client->response->server_capabilities;
 
 	/* scan the resultset */
 	chunk = sock->send_queue->chunks->head;
 
 	fields = network_mysqld_proto_fielddefs_new();
-	chunk = network_mysqld_proto_get_fielddefs(chunk, fields);
+	chunk = network_mysqld_proto_get_fielddefs(chunk, fields, capabilities);
 
 	/* a data row */
 	while (NULL != (chunk = chunk->next)) {

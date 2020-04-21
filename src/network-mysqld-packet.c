@@ -38,6 +38,20 @@
 #define C(x) x, sizeof(x) - 1
 #define S(x) x->str, x->len
 
+/* MariaDB messes with MySQL macros in strange ways, define it here instead */
+#ifndef CLIENT_DEPRECATE_EOF
+#define CLIENT_DEPRECATE_EOF (1ULL << 24)
+#endif
+
+/* TRUE if capabilities have CLIENT_DEPRECATE_EOF set. Normally it should be enough to check only
+ * client capabilities but there are cases when client sets its flag even if server does not
+ * announce that capability (see bug #91533).
+ */
+#define DEPRECATE_EOF(con) (con->client->response->client_capabilities & \
+							con->client->response->server_capabilities & \
+							CLIENT_DEPRECATE_EOF)
+
+
 network_mysqld_com_query_result_t *network_mysqld_com_query_result_new() {
 	network_mysqld_com_query_result_t *com_query;
 
@@ -69,7 +83,7 @@ int network_mysqld_com_query_result_track_state(network_packet G_GNUC_UNUSED *pa
  *         0  on success and done
  *         1  on success and need more
  */
-int network_mysqld_proto_get_com_query_result(network_packet *packet, network_mysqld_com_query_result_t *query, gboolean use_binary_row_data) {
+int network_mysqld_proto_get_com_query_result(network_packet *packet, network_mysqld_com_query_result_t *query, gboolean use_binary_row_data, gboolean deprecate_eof) {
 	int is_finished = 0;
 	guint8 status;
 	int err = 0;
@@ -129,6 +143,13 @@ int network_mysqld_proto_get_com_query_result(network_packet *packet, network_my
 
 			break;
 		default:
+			/* Regular resultset, remember total field count */
+			err = network_mysqld_proto_get_lenenc_int(packet, &query->field_count);
+			if (err) {
+				g_critical("%s: COM_QUERY resultset, failed to retrieve field count",
+						G_STRLOC);
+				break;
+			}
 			query->query_status = MYSQLD_PACKET_OK;
 			/* looks like a result */
 			query->state = PARSE_COM_QUERY_FIELD;
@@ -198,6 +219,15 @@ int network_mysqld_proto_get_com_query_result(network_packet *packet, network_my
 			}
 			break;
 		default:
+			/* means this is a column definition */
+			if (deprecate_eof) {
+				/* There is no past-fields EOF when DEPRECATE_EOF capability is set,
+				 * so we have to count fields and stop. */
+				-- query->field_count;
+				if (query->field_count == 0) {
+					query->state = PARSE_COM_QUERY_RESULT;
+				}
+			}
 			break;
 		}
 		break;
@@ -207,7 +237,7 @@ int network_mysqld_proto_get_com_query_result(network_packet *packet, network_my
 
 		switch (status) {
 		case MYSQLD_PACKET_EOF:
-			if (packet->data->len == 9) {
+			if (packet->data->len == (deprecate_eof ? 11 : 9)) {
 				eof_packet = network_mysqld_eof_packet_new();
 
 				err = err || network_mysqld_proto_get_eof_packet(packet, eof_packet);
@@ -702,11 +732,11 @@ int network_mysqld_proto_get_query_result(network_packet *packet, network_mysqld
 		/* COM_STMT_EXECUTE result packets are basically the same as COM_QUERY ones,
 		 * the only difference is the encoding of the actual data - fields are in there, too.
 		 */
-		is_finished = network_mysqld_proto_get_com_query_result(packet, con->parse.data, TRUE);
+		is_finished = network_mysqld_proto_get_com_query_result(packet, con->parse.data, TRUE, DEPRECATE_EOF(con));
 		break;
 	case COM_PROCESS_INFO:
 	case COM_QUERY:
-		is_finished = network_mysqld_proto_get_com_query_result(packet, con->parse.data, FALSE);
+		is_finished = network_mysqld_proto_get_com_query_result(packet, con->parse.data, FALSE, DEPRECATE_EOF(con));
 		break;
 	case COM_BINLOG_DUMP:
 		/**
@@ -814,14 +844,13 @@ int network_mysqld_proto_get_fielddef(network_packet *packet, network_mysqld_pro
  * @param fields empty array where the fields shall be stored in
  *
  * @return NULL if there is no resultset
- *         pointer to the chunk after the fields (to the EOF packet)
+ *         pointer to the chunk with row data (or final EOF packet if no row data)
  */ 
-GList *network_mysqld_proto_get_fielddefs(GList *chunk, GPtrArray *fields) {
+GList *network_mysqld_proto_get_fielddefs(GList *chunk, GPtrArray *fields, guint32 capabilities) {
 	network_packet packet;
 	guint64 field_count;
 	guint i;
 	int err = 0;
-	guint32 capabilities = CLIENT_PROTOCOL_41;
 	network_mysqld_lenenc_type lenenc_type;
     
 	packet.data = chunk->data;
@@ -871,22 +900,23 @@ GList *network_mysqld_proto_get_fielddefs(GList *chunk, GPtrArray *fields) {
 		if (err) return NULL;
 	}
     
-	/* this should be EOF chunk */
-	chunk = chunk->next;
+	/* if CLIENT_DEPRECATE_EOF is not set then next chunk  should be EOF chunk, skip it */
+	if (!(capabilities & CLIENT_DEPRECATE_EOF)) {
+		chunk = chunk->next;
+		if (!chunk) return NULL;
 
-	if (!chunk) return NULL;
+		packet.data = chunk->data;
+		packet.offset = 0;
+		
+		err = err || network_mysqld_proto_skip_network_header(&packet);
 
-	packet.data = chunk->data;
-	packet.offset = 0;
-	
-	err = err || network_mysqld_proto_skip_network_header(&packet);
+		err = err || network_mysqld_proto_peek_lenenc_type(&packet, &lenenc_type);
+		err = err || (lenenc_type != NETWORK_MYSQLD_LENENC_TYPE_EOF);
 
-	err = err || network_mysqld_proto_peek_lenenc_type(&packet, &lenenc_type);
-	err = err || (lenenc_type != NETWORK_MYSQLD_LENENC_TYPE_EOF);
-
-	if (err) return NULL;
+		if (err) return NULL;
+	}
     
-	return chunk;
+	return chunk->next;
 }
 
 network_mysqld_ok_packet_t *network_mysqld_ok_packet_new() {
