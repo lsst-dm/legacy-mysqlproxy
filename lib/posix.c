@@ -126,7 +126,7 @@ static const struct luaL_Reg posixlib[] = {
 #endif
 
 LUAEXT_API int luaopen_posix (lua_State *L) {
-	luaL_register (L, "posix", posixlib);
+	luaL_newlib (L, posixlib);
 	set_info (L);
 	return 1;
 }

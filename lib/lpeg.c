@@ -2174,8 +2174,8 @@ int luaopen_lpeg (lua_State *L) {
   lua_newtable(L);
   lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);  /* empty env for new patterns */
   luaL_newmetatable(L, PATTERN_T);
-  luaL_register(L, NULL, metapattreg);
-  luaL_register(L, "lpeg", pattreg);
+  luaL_setfuncs(L, metapattreg, 0);
+  luaL_newlib(L, pattreg);
   lua_pushliteral(L, "__index");
   lua_pushvalue(L, -2);
   lua_settable(L, -4);

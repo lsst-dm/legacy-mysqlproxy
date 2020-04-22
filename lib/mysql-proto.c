@@ -818,7 +818,7 @@ static const struct luaL_Reg mysql_protolib[] = {
 #endif
 
 LUAEXT_API int luaopen_mysql_proto (lua_State *L) {
-	luaL_register (L, "proto", mysql_protolib);
+	luaL_newlib (L, mysql_protolib);
 	set_info (L);
 	return 1;
 }

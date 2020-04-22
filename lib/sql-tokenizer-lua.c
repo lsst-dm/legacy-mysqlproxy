@@ -200,7 +200,7 @@ static const struct luaL_Reg mysql_tokenizerlib[] = {
 #endif
 
 LUAEXT_API int luaopen_mysql_tokenizer (lua_State *L) {
-	luaL_register (L, "tokenizer", mysql_tokenizerlib);
+	luaL_newlib (L, mysql_tokenizerlib);
 	set_info (L);
 	return 1;
 }

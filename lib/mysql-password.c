@@ -141,7 +141,7 @@ static const struct luaL_Reg mysql_passwordlib[] = {
 #endif
 
 LUAEXT_API int luaopen_mysql_password (lua_State *L) {
-	luaL_register (L, "password", mysql_passwordlib);
+	luaL_newlib (L, mysql_passwordlib);
 	set_info (L);
 	return 1;
 }
