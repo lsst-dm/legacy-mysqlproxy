@@ -107,7 +107,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_reg posixlib[] = {
+static const struct luaL_Reg posixlib[] = {
 	{"getpid", lua_getpid},
 	{"getuid", lua_getuid},
 #ifdef HAVE_PWD_H
@@ -126,7 +126,7 @@ static const struct luaL_reg posixlib[] = {
 #endif
 
 LUAEXT_API int luaopen_posix (lua_State *L) {
-	luaL_register (L, "posix", posixlib);
+	luaL_newlib (L, posixlib);
 	set_info (L);
 	return 1;
 }

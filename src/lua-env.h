@@ -30,6 +30,6 @@
 
 NETWORK_API void lua_getfield_literal (lua_State *L, int idx, const char *k, size_t k_len);
 NETWORK_API void *luaL_checkself (lua_State *L);
-NETWORK_API int proxy_getmetatable(lua_State *L, const luaL_reg *methods);
+NETWORK_API int proxy_getmetatable(lua_State *L, const luaL_Reg *methods);
 
 #endif

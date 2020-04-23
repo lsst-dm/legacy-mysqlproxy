@@ -152,7 +152,7 @@ static int proxy_connection_set(lua_State *L) {
 }
 
 int network_mysqld_con_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_connection_get },
 		{ "__newindex", proxy_connection_set },
 		{ NULL, NULL },
@@ -284,7 +284,7 @@ network_mysqld_register_callback_ret network_mysqld_con_lua_register_callback(ne
 
 		g_assert(lua_isfunction(L, -1));
 
-		lua_getfenv(L, -1);
+		lua_getupvalue(L, -1, 1);
 		g_assert(lua_istable(L, -1));
 
 		lua_getglobal(L, "proxy");
@@ -331,7 +331,7 @@ network_mysqld_register_callback_ret network_mysqld_con_lua_register_callback(ne
 
 	lua_newtable(L); /* the meta-table for the new env           (sp += 1) 2 */
 
-	lua_pushvalue(L, LUA_GLOBALSINDEX);                       /* (sp += 1) 3 */
+	lua_pushglobaltable(L);                                   /* (sp += 1) 3 */
 	lua_setfield(L, -2, "__index"); /* { __index = _G }          (sp -= 1) 2 */
 	lua_setmetatable(L, -2); /* setmetatable({}, {__index = _G}) (sp -= 1) 1 */
 
@@ -431,7 +431,7 @@ network_mysqld_register_callback_ret network_mysqld_con_lua_register_callback(ne
 	g_assert(lua_isfunction(L, -2));
 	g_assert(lua_istable(L, -1));
 
-	lua_setfenv(L, -2); /* on the stack should be a modified env (sp -= 1) */
+	lua_setupvalue(L, -2, 1); /* on the stack should be a modified env (sp -= 1) */
 
 	/* cache the script in this connection */
 	g_assert(lua_isfunction(L, -1));

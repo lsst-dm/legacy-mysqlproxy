@@ -104,7 +104,7 @@ static int proxy_backend_set(lua_State *L) {
 }
 
 int network_backend_lua_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_backend_get },
 		{ "__newindex", proxy_backend_set },
 		{ NULL, NULL },
@@ -153,7 +153,7 @@ static int proxy_backends_len(lua_State *L) {
 }
 
 int network_backends_lua_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_backends_get },
 		{ "__len", proxy_backends_len },
 		{ NULL, NULL },

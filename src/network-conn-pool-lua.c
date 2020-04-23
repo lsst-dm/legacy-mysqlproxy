@@ -77,7 +77,7 @@ static int proxy_pool_queue_get(lua_State *L) {
 }
 
 int network_connection_pool_queue_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = { 
+	static const struct luaL_Reg methods[] = { 
 		{ "__index", proxy_pool_queue_get },
 
 		{ NULL, NULL },
@@ -108,7 +108,7 @@ static int proxy_pool_users_get(lua_State *L) {
 }
 
 int network_connection_pool_users_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_pool_users_get },
 		{ NULL, NULL },
 	};
@@ -158,7 +158,7 @@ static int proxy_pool_set(lua_State *L) {
 }
 
 int network_connection_pool_getmetatable(lua_State *L) {
-	static const struct luaL_reg methods[] = {
+	static const struct luaL_Reg methods[] = {
 		{ "__index", proxy_pool_get },
 		{ "__newindex", proxy_pool_set },
 		{ NULL, NULL },
