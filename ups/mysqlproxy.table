@@ -1,5 +1,4 @@
 setupRequired(libevent)
-setupRequired(lua)
 setupRequired(mariadb)
 
 envPrepend(PATH, ${PRODUCT_DIR}/bin)
