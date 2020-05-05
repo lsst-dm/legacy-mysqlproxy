@@ -1,3 +1,7 @@
 # EupsPkg config file. Sourced by 'eupspkg'
 
+export LIBS="-levent -lm"
+export LUA_CFLAGS="-I$CONDA_PREFIX/include"
+export LUA_LIBS="-llua"
+
 CONFIGURE_OPTIONS="--prefix=$PREFIX --with-lua --with-mysql=$MARIADB_DIR/bin/mysql_config"
