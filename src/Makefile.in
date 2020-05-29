@@ -240,7 +240,7 @@ am_mysql_binlog_dump_OBJECTS =  \
 mysql_binlog_dump_OBJECTS = $(am_mysql_binlog_dump_OBJECTS)
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	libmysql-chassis.la $(am__DEPENDENCIES_1) libmysql-proxy.la \
-	libmysql-chassis-glibext.la
+	libmysql-chassis-glibext.la libmysql-chassis-timing.la
 mysql_binlog_dump_DEPENDENCIES = $(am__DEPENDENCIES_2)
 mysql_binlog_dump_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
@@ -551,7 +551,7 @@ luaextdir = ${pkglibdir}/lua
 plugindir = ${pkglibdir}/plugins
 BUILD_CPPFLAGS = $(LUA_CFLAGS) $(MYSQL_CFLAGS) $(GLIB_CFLAGS) $(GMODULE_CFLAGS) $(GTHREAD_CFLAGS)
 BUILD_CFLAGS = -DLUAEXTDIR="\"$(luaextdir)\""  -DPLUGINDIR="\"$(plugindir)\""  -DEXEC_PREFIX="\"$(exec_prefix)\""
-BUILD_LDADD = $(GLIB_LIBS) $(GMODULE_LIBS) libmysql-chassis.la $(GTHREAD_LIBS) libmysql-proxy.la libmysql-chassis-glibext.la
+BUILD_LDADD = $(GLIB_LIBS) $(GMODULE_LIBS) libmysql-chassis.la $(GTHREAD_LIBS) libmysql-proxy.la libmysql-chassis-glibext.la libmysql-chassis-timing.la
 BUILT_SOURCES = $(am__append_2)
 mysql_proxy_SOURCES = mysql-proxy-cli.c
 mysql_proxy_CPPFLAGS = $(BUILD_CPPFLAGS)
