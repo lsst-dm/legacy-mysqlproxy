@@ -350,7 +350,7 @@ static int lua_proto_append_eof_packet (lua_State *L) {
 static int lua_proto_get_response_packet (lua_State *L) {
 	size_t packet_len;
 	const char *packet_str = luaL_checklstring(L, 1, &packet_len);
-	guint32 server_capabilities = luaL_checkint(L, 2);
+	guint32 server_capabilities = (guint32)luaL_checkinteger(L, 2);
 	network_mysqld_auth_response *auth_response;
 	network_packet packet;
 	GString s;
@@ -590,7 +590,7 @@ static int lua_proto_get_stmt_prepare_ok_packet (lua_State *L) {
 static int lua_proto_get_stmt_execute_packet (lua_State *L) {
 	size_t packet_len;
 	const char *packet_str = luaL_checklstring(L, 1, &packet_len);
-	int param_count = luaL_checkint(L, 2);
+	int param_count = (int)luaL_checkinteger(L, 2);
 	network_mysqld_stmt_execute_packet_t *cmd;
 	network_packet packet;
 	GString s;
