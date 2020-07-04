@@ -93,7 +93,7 @@ static const struct luaL_Reg gliblib[] = {
 #endif
 
 LUAEXT_API int luaopen_glib2 (lua_State *L) {
-	luaL_newlieb (L, gliblib);
+	luaL_newlib (L, gliblib);
 	set_info (L);
 	return 1;
 }
