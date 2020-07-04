@@ -218,7 +218,7 @@ static const char *val2str (lua_State *L, int idx) {
 
 static int getposition (lua_State *L, int t, int i) {
   int res;
-  lua_getupvalue(L, -1, 1);
+  lua_getuservalue(L, 1);
   lua_rawgeti(L, -1, i);  /* get key from pattern's environment */
   lua_gettable(L, t);  /* get position from positions table */
   res = lua_tointeger(L, -1);
@@ -924,17 +924,17 @@ static int isheadfail (Instruction *p) {
 
 static int jointable (lua_State *L, int p1) {
   int n, n1, i;
-  lua_getupvalue(L, p1, 1);
-  n1 = lua_objlen(L, -1);  /* number of elements in p1's env */
-  lua_getupvalue(L, -2, 1);
-  if (n1 == 0 || lua_equal(L, -2, -1)) {
+  lua_getuservalue(L, p1);
+  n1 = lua_rawlen(L, -1);  /* number of elements in p1's env */
+  lua_getuservalue(L, -2);
+  if (n1 == 0 || lua_compare(L, -2, -1, LUA_OPEQ)) {
     lua_pop(L, 2);
     return 0;  /* no need to change anything */
   }
-  n = lua_objlen(L, -1);  /* number of elements in p's env */
+  n = lua_rawlen(L, -1);  /* number of elements in p's env */
   if (n == 0) {
     lua_pop(L, 1);  /* removes p env */
-    lua_setupvalue(L, -2, 1);  /* p now shares p1's env */
+    lua_setuservalue(L, -2);  /* p now shares p1's env */
     return 0;  /* no need to correct anything */
   }
   lua_createtable(L, n + n1, 0);
@@ -947,7 +947,7 @@ static int jointable (lua_State *L, int p1) {
     lua_rawgeti(L, -3, i);
     lua_rawseti(L, -2, n + i);
   }
-  lua_setupvalue(L, -4, 1);  /* new table becomes p env */
+  lua_setuservalue(L, -4);  /* new table becomes p env */
   lua_pop(L, 2);  /* remove p1 env and old p env */
   return n;
 }
@@ -955,7 +955,7 @@ static int jointable (lua_State *L, int p1) {
 
 #define copypatt(p1,p2,sz)	memcpy(p1, p2, (sz) * sizeof(Instruction));
 
-#define pattsize(L,idx)		(lua_objlen(L, idx)/sizeof(Instruction) - 1)
+#define pattsize(L,idx)		(lua_rawlen(L, idx)/sizeof(Instruction) - 1)
 
 
 static int addpatt (lua_State *L, Instruction *p, int p1idx) {
@@ -989,7 +989,7 @@ static int value2fenv (lua_State *L, int vidx) {
   lua_createtable(L, 1, 0);
   lua_pushvalue(L, vidx);
   lua_rawseti(L, -2, 1);
-  lua_setupvalue(L, -2, 1);
+  lua_setuservalue(L, -2);
   return 1;
 }
 
@@ -1561,7 +1561,7 @@ static void optionals (lua_State *L, int l1, int n) {
 
 static int star_l (lua_State *L) {
   int l1;
-  int n = luaL_checkint(L, 2);
+  int n = (int)luaL_checkinteger(L, 2);
   Instruction *p1 = getpatt(L, 1, &l1);
   if (n >= 0) {
     CharsetTag st;
@@ -1637,7 +1637,7 @@ static int position_l (lua_State *L) {
 
 
 static int emptycap_aux (lua_State *L, int kind, const char *msg) {
-  int n = luaL_checkint(L, 1);
+  int n = (int)luaL_checkinteger(L, 1);
   Instruction *p = newpatt(L, 1);
   luaL_argcheck(L, 0 < n && n <= SHRT_MAX, 1, msg);
   setinstcap(p, IEmptyCapture, n, kind, 0);
@@ -1682,7 +1682,7 @@ static int capconst_l (lua_State *L) {
       lua_rawseti(L, -2, j++);
     }
   }
-  lua_setupvalue(L, -2, 1);   /* set environment */
+  lua_setuservalue(L, -2);   /* set environment */
   return 1;
 }
 
@@ -2093,8 +2093,8 @@ static int type_l (lua_State *L) {
 static int printpat_l (lua_State *L) {
   Instruction *p = getpatt(L, 1, NULL);
   int n, i;
-  lua_getupvalue(L, 1, 1);
-  n = lua_objlen(L, -1);
+  lua_getuservalue(L, 1);
+  n = lua_rawlen(L, -1);
   printf("[");
   for (i = 1; i <= n; i++) {
     printf("%d = ", i);
@@ -2124,7 +2124,7 @@ static int matchl (lua_State *L) {
              (((size_t)-ii <= l) ? l - ((size_t)-ii) : 0);
   lua_pushnil(L);  /* subscache */
   lua_pushlightuserdata(L, capture);  /* caplistidx */
-  lua_getupvalue(L, 1, 1);  /* penvidx */
+  lua_getuservalue(L, 1);  /* penvidx */
   r = match(L, s, s + i, s + l, p, capture, ptop);
   if (r == NULL) {
     lua_pushnil(L);
@@ -2171,14 +2171,10 @@ static struct luaL_Reg metapattreg[] = {
 
 int luaopen_lpeg (lua_State *L);
 int luaopen_lpeg (lua_State *L) {
-  lua_newtable(L);
-  lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);  /* empty env for new patterns */
-  luaL_newmetatable(L, PATTERN_T);
-  luaL_setfuncs(L, metapattreg, 0);
-  luaL_newlib(L, pattreg);
-  lua_pushliteral(L, "__index");
-  lua_pushvalue(L, -2);
-  lua_settable(L, -4);
+  luaL_newmetatable(L, PATTERN_T);      // []@1 (@1 -> reg[pattern])
+  luaL_setfuncs(L, metapattreg, 0);     // [__add, __pow, ...]@1
+  luaL_newlib(L, pattreg);              // [__add, __pow, ...]@1 [match, print, ...]@2
+  lua_pushvalue(L, -1);                 // [__add, __pow, ...]@1 [match, print, ...]@2 @2
+  lua_setfield(L, -3, "__index");       // [__add, __pow, __index@2]@1 [match, print, ...]@2
   return 1;
 }
-
