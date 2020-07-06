@@ -192,7 +192,7 @@ lua_State *lua_scope_load_script(lua_scope *sc, const gchar *name) {
 		cached_mtime = lua_tonumber(L, -1);
 		lua_pop(L, 1);
 
-		/* get the mtime from the table */
+		/* get the size from the table */
 		lua_getfield(L, -1, "size");
 		g_assert(lua_isnumber(L, -1));
 		cached_size = lua_tonumber(L, -1);
