@@ -288,7 +288,7 @@ static void set_info (lua_State *L) {
 
 #define CHASSIS_LUA_LOG_FUNC(level) {#level, lua_chassis_log_ ## level}
 
-static const struct luaL_Reg chassislib[] = {
+static const struct luaL_reg chassislib[] = {
 	{"set_shutdown", lua_chassis_set_shutdown},
 	{"log", lua_chassis_log},
 /* we don't really want g_error being exposed, since it abort()s */
@@ -330,7 +330,7 @@ static void remap_print(lua_State *L) {
 #endif
 
 LUAEXT_API int luaopen_chassis (lua_State *L) {
-	luaL_newlib (L, chassislib);
+	luaL_register (L, "chassis", chassislib);
 	set_info (L);
 	remap_print(L);
 	return 1;
