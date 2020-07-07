@@ -23,7 +23,7 @@ plugindir = ${pkglibdir}/plugins
 
 BUILD_CPPFLAGS = $(LUA_CFLAGS) $(MYSQL_CFLAGS) $(GLIB_CFLAGS) $(GMODULE_CFLAGS) $(GTHREAD_CFLAGS)
 BUILD_CFLAGS   = -DLUAEXTDIR="\"$(luaextdir)\""  -DPLUGINDIR="\"$(plugindir)\""  -DEXEC_PREFIX="\"$(exec_prefix)\""
-BUILD_LDADD    = $(GLIB_LIBS) $(GMODULE_LIBS) libmysql-chassis.la $(GTHREAD_LIBS) libmysql-proxy.la libmysql-chassis-glibext.la
+BUILD_LDADD    = $(GLIB_LIBS) $(GMODULE_LIBS) libmysql-chassis.la $(GTHREAD_LIBS) libmysql-proxy.la libmysql-chassis-glibext.la libmysql-chassis-timing.la
 
 BUILT_SOURCES =
 if USE_WRAPPER_SCRIPT
