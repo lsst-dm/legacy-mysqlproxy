@@ -293,7 +293,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_read_query_result(network_mysqld_co
 		lua_State *L = st->L;
 
 		g_assert(lua_isfunction(L, -1));
-		lua_getupvalue(L, -1, 1);
+		lua_getfenv(L, -1);
 		g_assert(lua_istable(L, -1));
 		
 		lua_getfield_literal(L, -1, C("read_query_result"));
@@ -445,7 +445,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_read_handshake(network_mysqld_con *
 	L = st->L;
 
 	g_assert(lua_isfunction(L, -1));
-	lua_getupvalue(L, -1, 1);
+	lua_getfenv(L, -1);
 	g_assert(lua_istable(L, -1));
 	
 	lua_getfield_literal(L, -1, C("read_handshake"));
@@ -611,7 +611,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_read_auth(network_mysqld_con *con) 
 	L = st->L;
 
 	g_assert(lua_isfunction(L, -1));
-	lua_getupvalue(L, -1, 1);
+	lua_getfenv(L, -1);
 	g_assert(lua_istable(L, -1));
 	
 	lua_getfield_literal(L, -1, C("read_auth"));
@@ -945,7 +945,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_read_auth_result(network_mysqld_con
 	L = st->L;
 
 	g_assert(lua_isfunction(L, -1));
-	lua_getupvalue(L, -1, 1);
+	lua_getfenv(L, -1);
 	g_assert(lua_istable(L, -1));
 	
 	lua_getfield_literal(L, -1, C("read_auth_result"));
@@ -1194,7 +1194,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_read_query(network_mysqld_con *con)
 		network_mysqld_lua_stmt_ret ret = PROXY_NO_DECISION;
 
 		g_assert(lua_isfunction(L, -1));
-		lua_getupvalue(L, -1, 1);
+		lua_getfenv(L, -1);
 		g_assert(lua_istable(L, -1));
 
 		/**
@@ -1642,7 +1642,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_connect_server(network_mysqld_con *
 	L = st->L;
 
 	g_assert(lua_isfunction(L, -1));
-	lua_getupvalue(L, -1, 1);
+	lua_getfenv(L, -1);
 	g_assert(lua_istable(L, -1));
 	
 	lua_getfield_literal(L, -1, C("connect_server"));
@@ -2003,7 +2003,7 @@ static network_mysqld_lua_stmt_ret proxy_lua_disconnect_client(network_mysqld_co
 	L = st->L;
 
 	g_assert(lua_isfunction(L, -1));
-	lua_getupvalue(L, -1, 1);
+	lua_getfenv(L, -1);
 	g_assert(lua_istable(L, -1));
 	
 	lua_getfield_literal(L, -1, C("disconnect_client"));

@@ -790,7 +790,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_Reg mysql_protolib[] = {
+static const struct luaL_reg mysql_protolib[] = {
 	{"from_err_packet", lua_proto_get_err_packet},
 	{"to_err_packet", lua_proto_append_err_packet},
 	{"from_ok_packet", lua_proto_get_ok_packet},
@@ -818,7 +818,7 @@ static const struct luaL_Reg mysql_protolib[] = {
 #endif
 
 LUAEXT_API int luaopen_mysql_proto (lua_State *L) {
-	luaL_newlib (L, mysql_protolib);
+	luaL_register (L, "proto", mysql_protolib);
 	set_info (L);
 	return 1;
 }

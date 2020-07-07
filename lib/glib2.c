@@ -79,7 +79,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_Reg gliblib[] = {
+static const struct luaL_reg gliblib[] = {
 	{"usleep", lua_g_usleep},
 	{"md5", lua_g_checksum_md5},
 	{"get_current_time", lua_g_get_current_time},
@@ -93,7 +93,7 @@ static const struct luaL_Reg gliblib[] = {
 #endif
 
 LUAEXT_API int luaopen_glib2 (lua_State *L) {
-	luaL_newlieb (L, gliblib);
+	luaL_register (L, "glib2", gliblib);
 	set_info (L);
 	return 1;
 }

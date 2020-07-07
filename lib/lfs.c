@@ -603,7 +603,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_Reg fslib[] = {
+static const struct luaL_reg fslib[] = {
 	{"attributes", file_info},
 	{"chdir", change_dir},
 	{"currentdir", get_dir},
@@ -618,7 +618,7 @@ static const struct luaL_Reg fslib[] = {
 
 LUAEXT_API int luaopen_lfs (lua_State *L) {
 	dir_create_meta (L);
-	luaL_newlib (L, fslib);
+	luaL_register (L, "lfs", fslib);
 	set_info (L);
 	return 1;
 }

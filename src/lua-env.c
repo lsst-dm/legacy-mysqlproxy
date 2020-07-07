@@ -59,10 +59,10 @@ void *luaL_checkself (lua_State *L) {
  * to make this work, the methods array has to be declared static to
  * keep its location
  */
-int proxy_getmetatable(lua_State *L, const luaL_Reg *methods) {
+int proxy_getmetatable(lua_State *L, const luaL_reg *methods) {
 	/* check if the */
 
-	lua_pushlightuserdata(L, (luaL_Reg *)methods);
+	lua_pushlightuserdata(L, (luaL_reg *)methods);
 	lua_gettable(L, LUA_REGISTRYINDEX);
 
 	if (lua_isnil(L, -1)) {
@@ -70,9 +70,9 @@ int proxy_getmetatable(lua_State *L, const luaL_Reg *methods) {
 		lua_pop(L, 1);
 
 		lua_newtable(L);
-		luaL_setfuncs(L, methods, 0);
+		luaL_register(L, NULL, methods);
 
-		lua_pushlightuserdata(L, (luaL_Reg *)methods);
+		lua_pushlightuserdata(L, (luaL_reg *)methods);
 		lua_pushvalue(L, -2);
 		lua_settable(L, LUA_REGISTRYINDEX);
 	}
