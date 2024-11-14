@@ -1311,7 +1311,7 @@ int network_mysqld_proto_get_auth_challenge(network_packet *packet, network_mysq
 		 */
 		if (min   < 0 || min   > 100 ||
 		    patch < 0 || patch > 100 ||
-		    maj   < 0 || maj   > 10) {
+		    maj   < 0 || maj   > 20) {
 			g_critical("%s: protocol 10, but version number out of range", G_STRLOC);
 	
 			return -1;
