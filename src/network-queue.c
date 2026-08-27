@@ -24,6 +24,7 @@
 #endif
 
 #include "network-queue.h"
+#include "glib-ext.h"
 
 #ifndef DISABLE_DEPRECATED_DECL
 network_queue *network_queue_init() {
@@ -93,13 +94,13 @@ GString *network_queue_peek_string(network_queue *queue, gsize peek_len, GString
 		if (node == queue->chunks->head) {
 			gsize we_have = we_want < (chunk->len - queue->offset) ? we_want : (chunk->len - queue->offset);
 
-			g_string_append_len(dest, chunk->str + queue->offset, we_have);
+			G_STRING_APPEND_LEN(dest, chunk->str + queue->offset, we_have);
 			
 			we_want -= we_have;
 		} else {
 			gsize we_have = we_want < chunk->len ? we_want : chunk->len;
 			
-			g_string_append_len(dest, chunk->str, we_have);
+			G_STRING_APPEND_LEN(dest, chunk->str, we_have);
 
 			we_want -= we_have;
 		}
@@ -137,7 +138,7 @@ GString *network_queue_pop_string(network_queue *queue, gsize steal_len, GString
 			/* if we don't have a dest-buffer yet, create one */
 			dest = g_string_sized_new(steal_len);
 		}
-		g_string_append_len(dest, chunk->str + queue->offset, we_have);
+		G_STRING_APPEND_LEN(dest, chunk->str + queue->offset, we_have);
 
 		queue->offset += we_have;
 		queue->len    -= we_have;

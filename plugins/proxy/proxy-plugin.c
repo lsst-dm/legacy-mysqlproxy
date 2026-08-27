@@ -767,7 +767,7 @@ NETWORK_MYSQLD_PLUGIN_PROTO(proxy_read_auth) {
 		auth_data = g_string_sized_new(auth_data_len);
 		network_mysqld_proto_get_gstring_len(&packet, auth_data_len, auth_data);
 
-		g_string_append_len(con->client->response->auth_plugin_data, S(auth_data));
+		G_STRING_APPEND_LEN(con->client->response->auth_plugin_data, S(auth_data));
 
 		g_string_free(auth_data, TRUE);
 	}
@@ -817,19 +817,19 @@ NETWORK_MYSQLD_PLUGIN_PROTO(proxy_read_auth) {
 
 					/* copy incl. the nul */
 					g_string_append_c(com_change_user, COM_CHANGE_USER);
-					g_string_append_len(com_change_user, con->client->response->username->str, con->client->response->username->len + 1); /* nul-term */
+					G_STRING_APPEND_LEN(com_change_user, con->client->response->username->str, con->client->response->username->len + 1); /* nul-term */
 
 					g_assert_cmpint(con->client->response->auth_plugin_data->len, <, 250);
 
 					g_string_append_c(com_change_user, (con->client->response->auth_plugin_data->len & 0xff));
-					g_string_append_len(com_change_user, S(con->client->response->auth_plugin_data));
+					G_STRING_APPEND_LEN(com_change_user, S(con->client->response->auth_plugin_data));
 
-					g_string_append_len(com_change_user, con->client->default_db->str, con->client->default_db->len + 1);
+					G_STRING_APPEND_LEN(com_change_user, con->client->default_db->str, con->client->default_db->len + 1);
 
 					network_mysqld_proto_append_int16(com_change_user, con->client->response->charset);
 
 					if (con->client->challenge->capabilities & CLIENT_PLUGIN_AUTH) {
-						g_string_append_len(com_change_user, con->client->response->auth_plugin_name->str, con->client->response->auth_plugin_name->len + 1);
+						G_STRING_APPEND_LEN(com_change_user, con->client->response->auth_plugin_name->str, con->client->response->auth_plugin_name->len + 1);
 					}
 
 					network_mysqld_queue_append(

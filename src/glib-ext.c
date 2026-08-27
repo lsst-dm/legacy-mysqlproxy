@@ -158,7 +158,7 @@ void ge_gtimeval_diff(GTimeVal *told, GTimeVal *tnew, gint64 *tdiff) {
 
 GString * g_string_assign_len(GString *s, const char *str, gsize str_len) {
 	g_string_truncate(s, 0);
-	return g_string_append_len(s, str, str_len);
+	return G_STRING_APPEND_LEN(s, str, str_len);
 }
 
 void g_debug_hexdump(const char *msg, const void *_s, size_t len) {
@@ -176,11 +176,11 @@ void g_debug_hexdump(const char *msg, const void *_s, size_t len) {
 
 		if ((i + 1) % 16 == 0) {
 			size_t j;
-			g_string_append_len(hex, C("  "));
+			G_STRING_APPEND_LEN(hex, C("  "));
 			for (j = i - 15; j <= i; j++) {
 				g_string_append_c(hex, g_ascii_isprint(s[j]) ? s[j] : '.');
 			}
-			g_string_append_len(hex, C("\n  "));
+			G_STRING_APPEND_LEN(hex, C("\n  "));
 		} else {
 			g_string_append_c(hex, ' ');
 		}
@@ -191,10 +191,10 @@ void g_debug_hexdump(const char *msg, const void *_s, size_t len) {
 		size_t j;
 
 		for (j = 0; j < 16 - (i % 16); j++) {
-			g_string_append_len(hex, C("   "));
+			G_STRING_APPEND_LEN(hex, C("   "));
 		}
 
-		g_string_append_len(hex, C(" "));
+		G_STRING_APPEND_LEN(hex, C(" "));
 		for (j = i - (len % 16); j < i; j++) {
 			g_string_append_c(hex, g_ascii_isprint(s[j]) ? s[j] : '.');
 		}

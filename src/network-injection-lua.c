@@ -62,7 +62,7 @@ static int proxy_queue_add(lua_State *L, proxy_queue_add_t type) {
 	injection *inj;
 
 	GString *query = g_string_sized_new(str_len);
-	g_string_append_len(query, str, str_len);
+	G_STRING_APPEND_LEN(query, str, str_len);
 
 	inj = injection_new(resp_type, query);
 	inj->resultset_is_needed = FALSE;

@@ -414,7 +414,7 @@ int network_mysqld_queue_append(network_socket *sock, network_queue *queue, cons
 
 		network_mysqld_proto_append_packet_len(s, cur_packet_len);
 		network_mysqld_proto_append_packet_id(s, ++sock->last_packet_id);
-		g_string_append_len(s, data + packet_offset, cur_packet_len);
+		G_STRING_APPEND_LEN(s, data + packet_offset, cur_packet_len);
 
 		network_queue_append(queue, s);
 
@@ -2140,7 +2140,7 @@ int network_mysqld_con_send_resultset(network_socket *con, GPtrArray *fields, GP
 		network_mysqld_proto_append_lenenc_string(s, field->org_name ? field->org_name : "");    /* org_name */
 
 		g_string_append_c(s, '\x0c');                  /* length of the following block, 12 byte */
-		g_string_append_len(s, "\x08\x00", 2);         /* charset */
+		G_STRING_APPEND_LEN(s, "\x08\x00", 2);         /* charset */
 		g_string_append_c(s, (field->length >> 0) & 0xff); /* len */
 		g_string_append_c(s, (field->length >> 8) & 0xff); /* len */
 		g_string_append_c(s, (field->length >> 16) & 0xff); /* len */
@@ -2149,7 +2149,7 @@ int network_mysqld_con_send_resultset(network_socket *con, GPtrArray *fields, GP
 		g_string_append_c(s, field->flags & 0xff);     /* flags */
 		g_string_append_c(s, (field->flags >> 8) & 0xff); /* flags */
 		g_string_append_c(s, 0);                       /* decimals */
-		g_string_append_len(s, "\x00\x00", 2);         /* filler */
+		G_STRING_APPEND_LEN(s, "\x00\x00", 2);         /* filler */
 #if 0
 		/* this is in the docs, but not on the network */
 		network_mysqld_proto_append_lenenc_string(s, field->def);         /* default-value */
@@ -2160,9 +2160,9 @@ int network_mysqld_con_send_resultset(network_socket *con, GPtrArray *fields, GP
 	g_string_truncate(s, 0);
 	
 	/* EOF */	
-	g_string_append_len(s, "\xfe", 1); /* EOF */
-	g_string_append_len(s, "\x00\x00", 2); /* warning count */
-	g_string_append_len(s, "\x02\x00", 2); /* flags */
+	G_STRING_APPEND_LEN(s, "\xfe", 1); /* EOF */
+	G_STRING_APPEND_LEN(s, "\x00\x00", 2); /* warning count */
+	G_STRING_APPEND_LEN(s, "\x02\x00", 2); /* flags */
 	
 	network_mysqld_queue_append(con, con->send_queue, S(s));
 
@@ -2181,9 +2181,9 @@ int network_mysqld_con_send_resultset(network_socket *con, GPtrArray *fields, GP
 	g_string_truncate(s, 0);
 
 	/* EOF */	
-	g_string_append_len(s, "\xfe", 1); /* EOF */
-	g_string_append_len(s, "\x00\x00", 2); /* warning count */
-	g_string_append_len(s, "\x02\x00", 2); /* flags */
+	G_STRING_APPEND_LEN(s, "\xfe", 1); /* EOF */
+	G_STRING_APPEND_LEN(s, "\x00\x00", 2); /* warning count */
+	G_STRING_APPEND_LEN(s, "\x02\x00", 2); /* flags */
 
 	network_mysqld_queue_append(con, con->send_queue, S(s));
 	network_mysqld_queue_reset(con);

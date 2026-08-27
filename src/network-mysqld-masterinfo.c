@@ -142,7 +142,7 @@ int network_mysqld_masterinfo_get(network_packet *packet, network_mysqld_masteri
 }
 
 static int network_mysqld_masterinfo_append_string(GString *packet, GString *s) {
-	g_string_append_len(packet, S(s));
+	G_STRING_APPEND_LEN(packet, S(s));
 	g_string_append_c(packet, '\n');
 
 	return 0;

@@ -242,7 +242,7 @@ static void test_mysqld_handshake(void) {
 	
 	packet.data = g_string_new(NULL);
 	packet.offset = 0;
-	g_string_append_len(packet.data, C(raw_packet));
+	G_STRING_APPEND_LEN(packet.data, C(raw_packet));
 
 	g_assert_cmpint(packet.data->len, ==, 78);
 
@@ -270,7 +270,7 @@ static void test_mysqld_handshake(void) {
 
 	/* ... and back */
 	g_string_truncate(packet.data, 0);
-	g_string_append_len(packet.data, C("J\0\0\0"));
+	G_STRING_APPEND_LEN(packet.data, C("J\0\0\0"));
 	network_mysqld_proto_append_auth_challenge(packet.data, shake);
 
 	g_assert_cmpint(packet.data->len, ==, sizeof(raw_packet) - 1);
@@ -305,7 +305,7 @@ static void test_mysqld_handshake_plugin_auth(void) {
 	
 	packet.data = g_string_new(NULL);
 	packet.offset = 0;
-	g_string_append_len(packet.data, C(raw_packet));
+	G_STRING_APPEND_LEN(packet.data, C(raw_packet));
 
 	g_assert_cmpint(packet.data->len, ==, 84);
 
@@ -335,7 +335,7 @@ static void test_mysqld_handshake_plugin_auth(void) {
 
 	/* ... and back */
 	g_string_truncate(packet.data, 0);
-	g_string_append_len(packet.data, C("P\0\0\0")); /* prepend length and sequence-id */
+	G_STRING_APPEND_LEN(packet.data, C("P\0\0\0")); /* prepend length and sequence-id */
 	network_mysqld_proto_append_auth_challenge(packet.data, shake);
 
 	g_assert_cmpint(packet.data->len, ==, sizeof(raw_packet) - 1);
@@ -370,7 +370,7 @@ static void test_mysqld_handshake_plugin_auth_20bytes(void) {
 
 	packet.data = g_string_new(NULL);
 	packet.offset = 0;
-	g_string_append_len(packet.data, C(raw_packet));
+	G_STRING_APPEND_LEN(packet.data, C(raw_packet));
 
 	g_assert_cmpint(packet.data->len, ==, 83);
 
@@ -400,7 +400,7 @@ static void test_mysqld_handshake_plugin_auth_20bytes(void) {
 
 	/* ... and back */
 	g_string_truncate(packet.data, 0);
-	g_string_append_len(packet.data, C("P\0\0\0")); /* prepend length and sequence-id */
+	G_STRING_APPEND_LEN(packet.data, C("P\0\0\0")); /* prepend length and sequence-id */
 	network_mysqld_proto_append_auth_challenge(packet.data, shake);
 
 	g_assert_cmpint(packet.data->len, ==, sizeof(raw_packet) - 1);
@@ -442,7 +442,7 @@ test_mysqld_handshake_plugin_auth_bug_59453(void) {
 	
 	packet.data = g_string_new(NULL);
 	packet.offset = 0;
-	g_string_append_len(packet.data, C(raw_packet));
+	G_STRING_APPEND_LEN(packet.data, C(raw_packet));
 
 	g_assert_cmpint(packet.data->len, ==, 83);
 
@@ -472,7 +472,7 @@ test_mysqld_handshake_plugin_auth_bug_59453(void) {
 
 	/* ... and back */
 	g_string_truncate(packet.data, 0);
-	g_string_append_len(packet.data, C("P\0\0\0")); /* prepend length and sequence-id */
+	G_STRING_APPEND_LEN(packet.data, C("P\0\0\0")); /* prepend length and sequence-id */
 	network_mysqld_proto_append_auth_challenge(packet.data, shake);
 
 	g_assert_cmpint(packet.data->len, ==, sizeof(raw_packet) - 1);
@@ -494,7 +494,7 @@ test_mysqld_check_password(void) {
 	challenge = g_string_new(NULL);
 	hashed_password = g_string_new(NULL);
 	auth_plugin_data = g_string_new(NULL);
-	g_string_append_len(challenge, raw_challenge, sizeof(raw_challenge) - 1);
+	G_STRING_APPEND_LEN(challenge, raw_challenge, sizeof(raw_challenge) - 1);
 
 	g_assert_cmpint(0, ==, network_mysqld_proto_password_hash(hashed_password, C("123")));
 	g_assert_cmpint(0, ==, network_mysqld_proto_password_scramble(auth_plugin_data, S(challenge), S(hashed_password)));
@@ -595,7 +595,7 @@ static void test_mysqld_auth_with_pw(void) {
 
 	challenge = g_string_new(NULL);
 	hashed_password = g_string_new(NULL);
-	g_string_append_len(challenge, raw_challenge, sizeof(raw_challenge) - 1);
+	G_STRING_APPEND_LEN(challenge, raw_challenge, sizeof(raw_challenge) - 1);
 
 	network_mysqld_proto_password_hash(hashed_password, C("123"));
 	network_mysqld_proto_password_scramble(auth->auth_plugin_data, S(challenge), S(hashed_password));
@@ -857,7 +857,7 @@ static void t_mysqld_get_auth_response_plugin_auth(void) {
 	g_string_truncate(packet.data, 0);
 	packet.offset = 0;
 
-	g_string_append_len(packet.data, C("\x50\x00\x00\x01"));
+	G_STRING_APPEND_LEN(packet.data, C("\x50\x00\x00\x01"));
 	err = err || network_mysqld_proto_append_auth_response(packet.data, auth);
 	g_assert_cmpint(err, ==, 0);
 

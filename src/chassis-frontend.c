@@ -54,6 +54,7 @@
 #include "chassis-win32-service.h"
 
 #include "string-len.h"
+#include "glib-ext.h"
 
 /**
  * initialize the basic components of the chassis
@@ -254,7 +255,7 @@ static int chassis_frontend_init_lua_paths(const char *set_path,
 			}
 
 			if (lua_path->len > 0) {
-				g_string_append_len(lua_path, C(LUA_PATHSEP));
+				G_STRING_APPEND_LEN(lua_path, C(LUA_PATHSEP));
 			}
 
 			g_string_append(lua_path, path);

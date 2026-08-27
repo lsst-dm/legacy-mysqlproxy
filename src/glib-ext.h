@@ -47,4 +47,6 @@ CHASSIS_API void ge_gtimeval_diff(GTimeVal *old, GTimeVal *new, gint64 *delay);
 CHASSIS_API GString *g_string_assign_len(GString *s, const char *, gsize );
 CHASSIS_API void g_debug_hexdump(const char *msg, const void *s, size_t len);
 
+#define G_STRING_APPEND_LEN(...) g_string_append_len(__VA_ARGS__)
+
 #endif

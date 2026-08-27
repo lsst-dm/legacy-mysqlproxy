@@ -568,7 +568,7 @@ int network_mysqld_proto_get_gstring_len(network_packet *packet, gsize len, GStr
 	err = err || (packet->offset + len > packet->data->len); /* offset would get too large */
 
 	if (!err) {
-		g_string_append_len(out, packet->data->str + packet->offset, len);
+		G_STRING_APPEND_LEN(out, packet->data->str + packet->offset, len);
 		packet->offset += len;
 	}
 
@@ -807,7 +807,7 @@ int network_mysqld_proto_append_lenenc_string_len(GString *packet, const char *s
 		g_string_append_c(packet, (gchar)251); /** this is NULL */
 	} else {
 		network_mysqld_proto_append_lenenc_int(packet, length);
-		g_string_append_len(packet, s, length);
+		G_STRING_APPEND_LEN(packet, s, length);
 	}
 
 	return 0;

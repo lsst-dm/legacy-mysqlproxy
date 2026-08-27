@@ -497,11 +497,11 @@ int network_mysqld_proto_get_com_init_db(
 
 		if (udata->db_name && udata->db_name->len) {
 			if (con->server) {
-				g_string_append_len(con->server->default_db, 
+				G_STRING_APPEND_LEN(con->server->default_db, 
 						S(udata->db_name));
 			}
 			
-			g_string_append_len(con->client->default_db, 
+			G_STRING_APPEND_LEN(con->client->default_db, 
 					S(udata->db_name));
 		}
 		 
@@ -1077,15 +1077,15 @@ int network_mysqld_proto_append_err_packet(GString *packet, network_mysqld_err_p
 	if (err_packet->version == NETWORK_MYSQLD_PROTOCOL_VERSION_41) {
 		g_string_append_c(packet, '#');
 		if (err_packet->sqlstate && (err_packet->sqlstate->len > 0)) {
-			g_string_append_len(packet, err_packet->sqlstate->str, 5);
+			G_STRING_APPEND_LEN(packet, err_packet->sqlstate->str, 5);
 		} else {
-			g_string_append_len(packet, C("07000"));
+			G_STRING_APPEND_LEN(packet, C("07000"));
 		}
 	}
 
 	errmsg_len = err_packet->errmsg->len;
 	if (errmsg_len >= 512) errmsg_len = 512;
-	g_string_append_len(packet, err_packet->errmsg->str, errmsg_len);
+	G_STRING_APPEND_LEN(packet, err_packet->errmsg->str, errmsg_len);
 
 	return 0;
 }
@@ -1333,11 +1333,11 @@ int network_mysqld_proto_get_auth_challenge(network_packet *packet, network_mysq
 		if (shake->capabilities & CLIENT_PLUGIN_AUTH) {
 			g_string_assign_len(shake->auth_plugin_data, auth_plugin_data_1, MIN(8, auth_plugin_data_len));
 			if (auth_plugin_data_len > 8) {
-				g_string_append_len(shake->auth_plugin_data, auth_plugin_data_2, auth_plugin_data_len - 8);
+				G_STRING_APPEND_LEN(shake->auth_plugin_data, auth_plugin_data_2, auth_plugin_data_len - 8);
 			}
 		} else if (shake->capabilities & CLIENT_SECURE_CONNECTION) {
 			g_string_assign_len(shake->auth_plugin_data, auth_plugin_data_1, 8);
-			g_string_append_len(shake->auth_plugin_data, auth_plugin_data_2, 12);
+			G_STRING_APPEND_LEN(shake->auth_plugin_data, auth_plugin_data_2, 12);
 		} else {
 			/* we have at least the old password scramble */
 			g_string_assign_len(shake->auth_plugin_data, auth_plugin_data_1, 8);
@@ -1379,15 +1379,15 @@ int network_mysqld_proto_append_auth_challenge(GString *packet, network_mysqld_a
 				shake->server_version %   100
 				);
 	} else {
-		g_string_append_len(packet, C("5.0.99"));
+		G_STRING_APPEND_LEN(packet, C("5.0.99"));
 	}
 	network_mysqld_proto_append_int8(packet, 0x00);
 	network_mysqld_proto_append_int32(packet, shake->thread_id);
 	if (shake->auth_plugin_data->len) {
 		g_assert_cmpint(shake->auth_plugin_data->len, >=, 8);
-		g_string_append_len(packet, shake->auth_plugin_data->str, 8);
+		G_STRING_APPEND_LEN(packet, shake->auth_plugin_data->str, 8);
 	} else {
-		g_string_append_len(packet, C("01234567"));
+		G_STRING_APPEND_LEN(packet, C("01234567"));
 	}
 	network_mysqld_proto_append_int8(packet, 0x00); /* filler */
 	network_mysqld_proto_append_int16(packet, shake->capabilities & 0xffff);
@@ -1409,9 +1409,9 @@ int network_mysqld_proto_append_auth_challenge(GString *packet, network_mysqld_a
 
 	if (shake->capabilities & CLIENT_PLUGIN_AUTH) {
 		g_assert_cmpint(shake->auth_plugin_data->len, >=, 8);
-		g_string_append_len(packet, shake->auth_plugin_data->str + 8, shake->auth_plugin_data->len - 8);
+		G_STRING_APPEND_LEN(packet, shake->auth_plugin_data->str + 8, shake->auth_plugin_data->len - 8);
 
-		g_string_append_len(packet, S(shake->auth_plugin_name));
+		G_STRING_APPEND_LEN(packet, S(shake->auth_plugin_name));
 		if ((shake->server_version >= 50510 && shake->server_version < 50600) ||
 		    (shake->server_version >= 50602)) {
 			g_string_append_c(packet, 0x00);
@@ -1420,9 +1420,9 @@ int network_mysqld_proto_append_auth_challenge(GString *packet, network_mysqld_a
 		/* if we only have SECURE_CONNECTION it is 0-terminated */
 		if (shake->auth_plugin_data->len) {
 			g_assert_cmpint(shake->auth_plugin_data->len, >=, 8);
-			g_string_append_len(packet, shake->auth_plugin_data->str + 8, shake->auth_plugin_data->len - 8);
+			G_STRING_APPEND_LEN(packet, shake->auth_plugin_data->str + 8, shake->auth_plugin_data->len - 8);
 		} else {
-			g_string_append_len(packet, C("890123456789"));
+			G_STRING_APPEND_LEN(packet, C("890123456789"));
 		}
 		network_mysqld_proto_append_int8(packet, 0x00);
 	}
@@ -1547,11 +1547,11 @@ int network_mysqld_proto_append_auth_response(GString *packet, network_mysqld_au
 		network_mysqld_proto_append_int16(packet, auth->client_capabilities);
 		network_mysqld_proto_append_int24(packet, auth->max_packet_size); /* max-allowed-packet */
 
-		if (auth->username->len) g_string_append_len(packet, S(auth->username));
+		if (auth->username->len) G_STRING_APPEND_LEN(packet, S(auth->username));
 		network_mysqld_proto_append_int8(packet, 0x00); /* trailing \0 */
 
 		if (auth->auth_plugin_data->len) {
-			g_string_append_len(packet, S(auth->auth_plugin_data)); /* no trailing \0 */
+			G_STRING_APPEND_LEN(packet, S(auth->auth_plugin_data)); /* no trailing \0 */
 		}
 	} else {
 		network_mysqld_proto_append_int32(packet, auth->client_capabilities);
@@ -1563,7 +1563,7 @@ int network_mysqld_proto_append_auth_response(GString *packet, network_mysqld_au
 			network_mysqld_proto_append_int8(packet, 0x00);
 		}
 
-		if (auth->username->len) g_string_append_len(packet, S(auth->username));
+		if (auth->username->len) G_STRING_APPEND_LEN(packet, S(auth->username));
 		network_mysqld_proto_append_int8(packet, 0x00); /* trailing \0 */
 
 		/* scrambled password */
@@ -1574,22 +1574,22 @@ int network_mysqld_proto_append_auth_response(GString *packet, network_mysqld_au
 			 * to the upper layers
 			 */
 			network_mysqld_proto_append_int8(packet, auth->auth_plugin_data->len);
-			g_string_append_len(packet, auth->auth_plugin_data->str, auth->auth_plugin_data->len & 0xff);
+			G_STRING_APPEND_LEN(packet, auth->auth_plugin_data->str, auth->auth_plugin_data->len & 0xff);
 		} else {
 			/* server only supports the old protocol which allows any length, but no \0 in the auth-plugin-data */
-			g_string_append_len(packet, auth->auth_plugin_data->str, auth->auth_plugin_data->len);
+			G_STRING_APPEND_LEN(packet, auth->auth_plugin_data->str, auth->auth_plugin_data->len);
 			network_mysqld_proto_append_int8(packet, 0x00); /* trailing \0 */
 		}
 
 		if ((auth->server_capabilities & CLIENT_CONNECT_WITH_DB) &&
 		    (auth->database->len > 0)) {
-			g_string_append_len(packet, S(auth->database));
+			G_STRING_APPEND_LEN(packet, S(auth->database));
 			network_mysqld_proto_append_int8(packet, 0x00); /* trailing \0 */
 		}
 
 		if ((auth->client_capabilities & CLIENT_PLUGIN_AUTH) &&
 		    (auth->server_capabilities & CLIENT_PLUGIN_AUTH)) {
-			g_string_append_len(packet, S(auth->auth_plugin_name));
+			G_STRING_APPEND_LEN(packet, S(auth->auth_plugin_name));
 			network_mysqld_proto_append_int8(packet, 0x00); /* trailing \0 */
 		}
 	}
@@ -1668,7 +1668,7 @@ int network_mysqld_proto_get_stmt_prepare_packet(network_packet *packet, network
 
 int network_mysqld_proto_append_stmt_prepare_packet(GString *packet, network_mysqld_stmt_prepare_packet_t *stmt_prepare_packet) {
 	network_mysqld_proto_append_int8(packet, COM_STMT_PREPARE);
-	g_string_append_len(packet, S(stmt_prepare_packet->stmt_text));
+	G_STRING_APPEND_LEN(packet, S(stmt_prepare_packet->stmt_text));
 
 	return 0;
 }
@@ -1902,7 +1902,7 @@ int network_mysqld_proto_append_stmt_execute_packet(GString *packet,
 	network_mysqld_proto_append_int32(packet, stmt_execute_packet->stmt_id);
 	network_mysqld_proto_append_int8(packet, stmt_execute_packet->flags);
 	network_mysqld_proto_append_int32(packet, stmt_execute_packet->iteration_count);
-	g_string_append_len(packet, S(nul_bits));
+	G_STRING_APPEND_LEN(packet, S(nul_bits));
 	network_mysqld_proto_append_int8(packet, stmt_execute_packet->new_params_bound);
 
 	if (stmt_execute_packet->new_params_bound) {
